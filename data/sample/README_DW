@@ -1,0 +1,112 @@
+A SIMPLE TRAINING RUN (POSTERIOR INFERENCE)
+---------------------
+Files:
+-----
+Files I made: data_train, data_train_vocab (see below).
+Files hdp produced: train_dir/*
+   These 2 files and 1 dir were named by me when I created them.
+   The dir name was determined by me and I sent it as a parameter to
+   hdp, which created and filled the directory.
+Files print.topics.R produced:  TOPICS_TRAIN
+   This file was named by me and sent as a parameter to print.topics.R
+   which created it and filled it in.
+
+The Run:
+--------
+I ran training with file data_train and said to put results into dir train_dir
+as follows:  
+hdp --algorithm train --data data_train --directory train_dir
+
+data_train is the data file. One row per document. So row, say, 3, gives
+information about document 3. Say row 3 looked like this:
+10 0:2  1:1  2:2  3:1  4:1  5:1  6:1  7:0  8:0  9:99
+That would mean that document 3 has 10 different words in it.
+These words are numbered from 0 to 9 (the numbers before the ":"s).
+So here, word 0 occurs 2 times in document 3
+So here, word 1 occurs 1 times in document 3
+So here, word 2 occurs 2 times in document 3
+So here, word 3 occurs 1 times in document 3
+So here, word 4 occurs 1 times in document 3
+...
+So here, word 9 occurs 99 times in document 3
+That's the format this hdp program expects for its input file.
+
+So what IS word 0, word 1, etc?
+This is given by some other file, which lists the words in the same
+order as above (as in data_train, the file used to do the hdp).
+I called that file data_train_vocab. Thus data_train_vocab allows
+us to decode the integer assignment of words used in data_train.
+e.g., the data_train_vocab file (for the data_train file) is:
+dog
+mouse
+bird
+cat
+fish
+parrot
+durmat
+bat
+horse
+mule
+This means that dog is word 0, mouse is word 1, etc. 
+
+AFTER we run hdp as above, it puts results in directory 
+   train_dir (because of the --directory train_dir flag).
+Inside train_dir is a file called mode-topics.dat
+That file contains the output mode-topics.dat which contains those results 
+with the largest joint likelihood ever seen during the gibbs sampling. 
+
+Topics:
+-------
+SO WHAT ARE THE TOPICS_TRAIN FOUND by hdp??
+
+Run the R program print.topics.R to see. I ran as follows:
+print.topics.R train_dir/mode-topics.dat data_train_vocab TOPICS_TRAIN 4
+
+Note that mode-topics.dat was produced by the hdp run above and put into
+     directory train_dir.
+Also, data_train_vocab is above (so it knows what text is word 0, word 1, etc.)
+Also, TOPICS_TRAIN is just the output file it writes its results into.
+Also, the "4" means I want it to list the top 4 words in each topic
+
+After I ran this, TOPICS_TRAIN contained:
+
+                   1                   2
+                mule               mouse
+                 dog                 dog
+                bird                bird
+                 cat              parrot
+This is telling me it found two topics. And it showed me the top 4 words in
+each (the 4 was a parameter I sent to print.topics.R above)
+
+Some of the files in train_dir give more specific info (like the percentage
+of "mule" in topic 1 etc.)
+
+A SIMPLE NEW DATA INFERENCE RUN (NEW DATA)
+------------------------------------------
+
+Make another data file, corresponding vocab file, and pick a dir name. I did:
+Files:
+data:  the new data file. Note that it uses the same vocab file as data_train
+TOPICS_TEST: same as TOPICS_TRAIN above, but for the new data.
+Dir:
+test_dir: named by me and sent as parameter to hdp, which creates and fills it
+
+Note that to run hdp for new data, it needs the saved training model. This is
+in file train_dir/mode.bin (it was created by hdp during the training run.)
+
+Ran it as:
+hdp --algorithm test --data data --saved_model train_dir/mode.bin --directory test_dir
+
+Then looked at results by:
+
+print.topics.R test_dir/test-mode-topics.dat data_train_vocab TOPICS_TEST 4
+
+The TOPICS_TEST produced was:
+
+                   1                   2                   3
+                mule               mouse              parrot
+                 dog                 dog               mouse
+                bird                bird                fish
+                fish              parrot                bird
+
+

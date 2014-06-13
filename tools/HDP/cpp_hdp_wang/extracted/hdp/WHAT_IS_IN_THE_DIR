@@ -1,0 +1,41 @@
+from: https://lists.cs.princeton.edu/pipermail/topic-models/2011-May/001329.html
+
+the nine .bin files are the models saved during the iterations and
+mode.bin is the model with the highest likelihood. All of them can be
+used for inference. For example, if you want to monitor how the model
+performs on the test set during the iterations, you can use those nine
+bin files. (There could be more bin files if you use more iterations).
+
+from: https://lists.cs.princeton.edu/pipermail/topic-models/2011-October/001609.html
+
+> What's the difference between the mode-*.dat files, such as mode-topics.dat,
+> and the dat files that start with numbers, such as 00400-topics.dat? Are the
+> mode files the final files after the algorithm stops and the number files
+> ones generated while the inference algorithm is running?
+
+mode-*.dat indicate those results with the largest joint likelihood
+ever seen during the gibbs sampling. and 00400-like files are the
+results for that iteration.
+
+
+> What is the format of the vocab.dat file used in print.topics.r? I think
+> that it's supposed to be one word per line where the order matches the term
+> numbers used in the LDA-C format, but I'm not sure.
+
+you are right!
+
+
+> This question may have a more obvious answer, but I'll ask anyway just to
+> make sure. Does each line of a *-word-assignments.dat file tell me the topic
+> that a word is assigned to for each document?
+
+yes, see README file for details on how to read this file.
+
+
+> Where do I obtain the topics.dat file used in print.topics.r?
+> What is the format of the topics.dat file used in print.topics.r?
+
+topics.dat is the output file of the topics. you give a file name (for
+example, topics.dat), it will print the topics to that file.
+
+
