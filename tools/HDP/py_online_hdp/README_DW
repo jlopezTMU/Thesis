@@ -3,8 +3,8 @@ NOTES:
   -data files do not have word_counts at the start of each line. 
    Each line must contain only word:count pairs (either ':' or ' ' to separate)
 
-To run on a smaller set:
+To run on a larger set:
 python run_online_hdp.py --T=100 --K=10 --D=5485 --W=23587 --eta=0.1 --alpha=0.1 --gamma=0.1 --tau=0.3 --batchsize=10 --max_time=10000000000   --max_iter=1000 --corpus_name=Sample --data_path=../../../../data/R8/R8_train_all_terms.dat --test_data_path=../../../../data/R8/R8_test_all_terms.dat --directory=./res --seq_mode --kappa=0.3
 
-To run on a larger set:
+To run on a smaller set:
 python run_online_hdp.py --T=100 --K=10 --D=5485 --W=23587 --eta=0.1 --alpha=0.1 --gamma=0.1 --tau=0.3 --batchsize=10 --max_time=10000000000   --max_iter=1000 --corpus_name=R3 --data_path=../../../../data/sample/data --test_data_path=../../../../data/sample/data_train --directory=./res --seq_mode --kappa=0.3
