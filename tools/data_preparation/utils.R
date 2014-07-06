@@ -20,18 +20,19 @@ export2lda_c <- function(tdm, fileName){
   # j - doc ids
   # v - word frequency
   
-  file.create(fileName) # overwrite existing file
+  fid <- file(fileName, "w") # overwrite existing file
   docIds <- unique(tdm$j)
   for(docId in docIds){
     # I am not certain if $j is guaranteed to be consecutive; 
     # hence the inefficient search using which
     wordIndexes <- which( tdm$j == docId)
-    cat(length(wordIndexes), file = fileName, sep = "", append = T)
+    cat(length(wordIndexes), file = fid, sep = "", append = T)
     for(wordIndex in  wordIndexes){
-      cat(" ", tdm$i[wordIndex], ":", tdm$v[wordIndex], file = fileName, sep = "", append = T)
+      cat(" ", tdm$i[wordIndex], ":", tdm$v[wordIndex], file = fid, sep = "", append = T)
     }
-    cat("\n", file = fileName, sep = "", append = T)
+    cat("\n", file = fid, sep = "", append = T)
   }
+  close(fid)
 
   # save dictionary of words
   write(tdm$dimnames$Terms, file = paste(fileName, ".dic", sep=""), sep = "\n")
