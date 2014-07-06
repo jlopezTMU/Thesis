@@ -4,9 +4,9 @@
 ## with ids 15 and 21, appearing 7 and 4 times, respectively. 
 ## This format is used by LDA and HDP-LDA code provided by Blei's team.
 ##
-## Usage example: export2blei(myTermDocMatrix, "~/foo.txt")
+## Usage example: export2lda_c(myTermDocMatrix, "~/foo.txt")
 ## Note that the existing file will be overwritten
-export2blei <- function(tdm, fileName){
+export2lda_c <- function(tdm, fileName){
   # We assume that
   # i - term (a.k.a. word) ids
   # j - doc ids
