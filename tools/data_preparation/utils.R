@@ -1,8 +1,16 @@
-## The function takes term document matrix (sparse representation) and exports it
-## in the following format "distinctWordCount wordId:WordCount ...", one document per line.
-## For example, "2 15:7 21:4" means that a document contains two distinct words 
+## The function takes term document matrix (sparse representation), tdm, and exports it to file
+## fileName in the following format "distinctWordCount wordId:WordCount ...", one document per 
+## line. For example, "2 15:7 21:4" means that a document contains two distinct words 
 ## with ids 15 and 21, appearing 7 and 4 times, respectively. 
 ## This format is used by LDA and HDP-LDA code provided by Blei's team.
+##
+## The function saves dictionary of words, one word per line to file fileName, suffixed by ".dic".
+## Id of a given word is given by word's line number in the file fileName.dic;
+## line number count starts from 1.
+##
+## The function saves document "names", one name per line to file fileName, suffixed by ".doc".
+## Id of a given document is equivalent to the document's line number in the file fileName.doc;
+## line number count starts from 1.
 ##
 ## Usage example: export2lda_c(myTermDocMatrix, "~/foo.txt")
 ## Note that the existing file will be overwritten
@@ -24,4 +32,10 @@ export2lda_c <- function(tdm, fileName){
     }
     cat("\n", file = fileName, sep = "", append = T)
   }
+
+  # save dictionary of words
+  write(tdm$dimnames$Terms, file = paste(fileName, ".dic", sep=""), sep = "\n")
+  
+  # save original document names
+  write(tdm$dimnames$Docs, file = paste(fileName, ".doc", sep=""), sep = "\n")
 }
