@@ -16,19 +16,19 @@
 ## Note that the existing file will be overwritten
 export2lda_c <- function(tdm, fileName){
   # We assume that
-  # i - term (a.k.a. word) ids
-  # j - doc ids
+  # j - term (a.k.a. word) ids
+  # i - doc ids
   # v - word frequency
   
   fid <- file(fileName, "w") # overwrite existing file
-  docIds <- unique(tdm$j)
+  docIds <- unique(tdm$i)
   for(docId in docIds){
     # I am not certain if $j is guaranteed to be consecutive; 
     # hence the inefficient search using which
-    wordIndexes <- which( tdm$j == docId)
+    wordIndexes <- which( tdm$i == docId)
     cat(length(wordIndexes), file = fid, sep = "", append = T)
     for(wordIndex in  wordIndexes){
-      cat(" ", tdm$i[wordIndex], ":", tdm$v[wordIndex], file = fid, sep = "", append = T)
+      cat(" ", tdm$j[wordIndex], ":", tdm$v[wordIndex], file = fid, sep = "", append = T)
     }
     cat("\n", file = fid, sep = "", append = T)
   }
