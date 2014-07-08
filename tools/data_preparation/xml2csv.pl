@@ -13,6 +13,8 @@ use HTML::Strip;
 use utf8;
 use Text::Unidecode;    #translates unicode into ascii
 
+sub transform;
+
 if ( scalar(@ARGV) != 2 ) {
 	print "usage: xml2csv.pl in_file_name out_file_name\n";
 	exit;
@@ -28,11 +30,17 @@ my $hs = HTML::Strip->new();
 print $fid "title\tbody\n";                 #header
 foreach ( @{ $ref->{row} } ) {
 	if ( $_->{PostTypeId} == "1" ) {        #if the post is the original question
-		my $title = unidecode( $_->{Title} );
-		my $body  = unidecode( $hs->parse( $_->{Body} ) );    #strip HTML tags
+		my $title = transform( $_->{Title} );
+		my $body  = transform( $hs->parse( $_->{Body} ) );    #strip HTML tags
 		$body =~ s/\n|\t/ /g;                                 #replace new line or tab with space
 		print $fid $title . "\t" . $body . "\n";
 	}
 }
 close $fid;
 $hs->eof;
+
+#convert unicode to ascii and make it lower case
+sub transform{
+	my ($txt) = @_;
+	return lc(unidecode( $txt ));
+}
