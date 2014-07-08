@@ -30,8 +30,9 @@ minWordLenghtToKeep <- 4
 
 ## Load the data
 #  Separator is set to \n to force 1 column per row. DataframeSource gets confused otherwise.
-Posts <- read.delim(file = readFrom, header = T, sep = "\n")
+Posts <- read.delim(file = readFrom, header = T, quote = "", sep = "\n")
 
+cat("Read", nrow(Posts), "rows from", readFrom, "\n")
 ## Build a corpus
 corp <- Corpus(DataframeSource(data.frame(Posts)))
 
@@ -47,6 +48,9 @@ corp = tm_map(corp, stemDocument) # Stemming
 
 ## Build a Document-Term Matrix
 dtm <- DocumentTermMatrix(corp, control = list(minWordLength = minWordLenghtToKeep))
+cat ("Created dtm for", length(unique(dtm$i)), "documents with", length(dtm$i), "elements\n")
 
 ## Export text corpus to LDA-C format
 export2lda_c(dtm, saveTo)
+cat("Export to", saveTo, "complete\n")
+cat("Done\n")
