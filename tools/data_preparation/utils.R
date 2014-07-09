@@ -40,3 +40,38 @@ export2lda_c <- function(tdm, fileName){
   # save original document names
   write(tdm$dimnames$Docs, file = paste(fileName, ".doc", sep=""), sep = "\n")
 }
+
+## This function reads the data from csv file, cleans it and returns tm text Corpus
+createCorp <- function(readFromfileName){
+  library(tm)
+  
+  ###############################################################################
+  # Setup Begin
+  ###############################################################################
+  #mininmal lenght of a word in the dictionary
+  minWordLenghtToKeep <- 4
+  ###############################################################################
+  # Setup End
+  ###############################################################################
+  
+  ## Load the data
+  #  Separator is set to \n to force 1 column per row. DataframeSource gets confused otherwise.
+  Posts <- read.delim(file = readFromfileName, header = T, quote = "", sep = "\n")
+  
+  cat("Read", nrow(Posts), "rows from", readFrom, "\n")
+  ## Build a corpus
+  corp <- Corpus(DataframeSource(data.frame(Posts)))
+  
+  ## Transform data
+  ## TODO: it seems that tm_map parallizes execution via duplication of R instances, 
+  ##   consuming lots of memory. If needed, we can use the functions below (e.g., stripWhitespace)
+  ##   directly.
+  corp = tm_map(corp, stripWhitespace) # Eliminate whitespace char
+  corp = tm_map(corp, removePunctuation) # Remove punctuation
+  corp = tm_map(corp, removeNumbers) # Eliminate numbers
+  corp = tm_map(corp, removeWords, stopwords('english')) # Remove Stopwords
+  corp = tm_map(corp, stemDocument) # Stemming
+
+  cat ("Created corpus from", length(corp), "documents\n")
+  return (corp)
+}
