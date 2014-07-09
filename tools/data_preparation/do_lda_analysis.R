@@ -30,12 +30,24 @@ test <- DocumentTermMatrix(corp[-trainInd])
 cl<-makeCluster(8)
 registerDoParallel(cl)
 
+cat("topicCount\tperp\talpha\tbeta.mean\tbeta.sd\tbeta.se\n", sep="\t", append = T
+    , file = paste(readFrom, ".perplexity", sep="")) # to file
+
 foreach(topicCount = 2:1000
         , .packages='topicmodels' #include package
 ) %dopar% { #change to %do% for sequential execution
   lda <- LDA(train, topicCount)
   perp <- perplexity(lda, test)
+  
+  # get model params
+  
+  mdl.alpha <- lda@alpha
+  mdl.beta.mean <- mean(lda@beta)
+  mdl.beta.sd <- sd(lda@beta)
+  mdl.beta.se <- sd(lda@beta) / sqrt(ncol(lda@beta) * nrow(lda@beta))
+  
   cat(topicCount, perp, "\n", sep="\t") #to screen (no screen output is parallel mode)
-  cat(topicCount, perp, "\n", sep="\t", append = T
+  cat(topicCount, perp, mdl.alpha, mdl.beta.mean, mdl.beta.sd, mdl.beta.se
+      , "\n", sep="\t", append = T
       , file = paste(readFrom, ".perplexity", sep="")) # to file
 }
