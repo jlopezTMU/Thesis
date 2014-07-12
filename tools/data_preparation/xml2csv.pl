@@ -37,7 +37,6 @@ foreach ( @{ $ref->{row} } ) {
 		my $creationDate = ( $_->{CreationDate} );
 		my $title        = transform( $_->{Title} );
 		my $body         = transform( $hs->parse( $_->{Body} ) );    #strip HTML tags
-		$body =~ s/\n|\t/ /g;    #replace new line or tab with space
 		print $fid $creationDate, "\t", $title . "\t" . $body . "\n";
 	}
 }
@@ -47,6 +46,7 @@ $hs->eof;
 #convert unicode to ascii and make it lower case
 sub transform{
 	my ($txt) = @_;
+	$txt =~ s/\n|\t/ /g;          #replace new line or tab with space
 	$txt =~ s/[[:punct:]]/ /g;    #replace punctuation with space
 	return lc( unidecode($txt) ); #convert #convert unicode to latin and change words to lowercase
 }
