@@ -26,14 +26,19 @@ my $ref = XMLin( $ARGV[0] );
 open( my $fid, ">" . $ARGV[1] )
   or die("Cannot open $ARGV[1] : $!\n");    #export to CSV
 
+#TODO: add the following attributes:
+#	Score == vote count -- stored in answer
+#	AcceptedAnswerId="4" -- stored in the question
+
 my $hs = HTML::Strip->new();
-print $fid "title\tbody\n";                 #header
+print $fid "create_ts\ttitle\tbody\n";      #header
 foreach ( @{ $ref->{row} } ) {
 	if ( $_->{PostTypeId} == "1" ) {        #if the post is the original question
-		my $title = transform( $_->{Title} );
-		my $body  = transform( $hs->parse( $_->{Body} ) );    #strip HTML tags
-		$body =~ s/\n|\t/ /g;                                 #replace new line or tab with space
-		print $fid $title . "\t" . $body . "\n";
+		my $creationDate = ( $_->{CreationDate} );
+		my $title        = transform( $_->{Title} );
+		my $body         = transform( $hs->parse( $_->{Body} ) );    #strip HTML tags
+		$body =~ s/\n|\t/ /g;    #replace new line or tab with space
+		print $fid $creationDate, "\t", $title . "\t" . $body . "\n";
 	}
 }
 close $fid;
@@ -42,5 +47,6 @@ $hs->eof;
 #convert unicode to ascii and make it lower case
 sub transform{
 	my ($txt) = @_;
-	return lc(unidecode( $txt ));
+	$txt =~ s/[[:punct:]]/ /g;    #replace punctuation with space
+	return lc( unidecode($txt) ); #convert #convert unicode to latin and change words to lowercase
 }
