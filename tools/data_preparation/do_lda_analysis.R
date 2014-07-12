@@ -39,7 +39,7 @@ registerDoParallel(cl)
 cat("topicCount\tperp\talpha\tbeta.mean\tbeta.sd\tbeta.se\n", sep="\t", append = T
     , file = paste(readFrom, ".perplexity", sep="")) # to file
 
-foreach(topicCount = 2:1000
+foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
         , .packages='topicmodels' #include package
 ) %dopar% { #change to %do% for sequential execution
   lda <- LDA(train, topicCount)
