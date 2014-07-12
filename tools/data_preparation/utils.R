@@ -74,3 +74,27 @@ createCorp <- function(readFromfileName, year, month){
   cat ("Created corpus from", length(corp), "documents\n")
   return (corp)
 }
+
+## Removes topics from the Document Term Matrix using tf-idf approach
+## dtm - Document Term Matrix to process
+## threshold - remove words with tf-idf values smaller than threshold
+##    this parameter is optional: if threshold is not defined, we will remove 
+##    most frequent words, based on the median value of tf-idf (at least 50%)
+##    Setting threshold = 0 will eliminate words appearing in every document
+removeFrequentWords <- function(dtm, threshold){
+  library("slam")
+  termTfidf <- tapply(dtm$v/row_sums(dtm)[dtm$i], dtm$j, mean) * 
+    log2(nDocs(dtm)/col_sums(dtm > 0))
+  
+  # if no theshold is provided then set the thrshold value to median of tf-idf
+  # distribution, removing at least 50% of the words
+  if( missing(threshold) ) { 
+    threshold <- median(termTfidf)
+  } 
+  
+  # remove terms which have tf-idf smaller than the median of all the tf-idf values
+  # this will shrink the dictionay by approximately 50%
+  dtm <- dtm[, termTfidf > threshold]
+  dtm <- dtm[row_sums(dtm) > 0,]  #remove docs that have no terms remaining (unlikely event)
+  return(dtm)
+}

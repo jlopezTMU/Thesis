@@ -23,8 +23,14 @@ set.seed(123)
 trainInd <- sample(seq_len(length(corp)), size = smpSize)
 
 ## Build a Document-Term Matrix
-train <- DocumentTermMatrix(corp[trainInd])
-test <- DocumentTermMatrix(corp[-trainInd])
+dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
+cat("Before tf-idf: term count =", nrow(dtm), "\n")
+dtm <- removeFrequentWords(dtm) #removing based on median tf-idf value
+cat("After tf-idf: term count =", nrow(dtm), "\n")
+
+#build train and test sets
+train <- dtm[trainInd, ]
+test <- dtm[-trainInd, ]
 
 #setup parallel backend to use 8 processors
 cl<-makeCluster(8)
