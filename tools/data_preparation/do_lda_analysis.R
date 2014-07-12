@@ -14,21 +14,21 @@ readFrom <- args[1]
 
 corp <- createCorp(readFrom)
 
+## Build a Document-Term Matrix
+dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
+cat("Before tf-idf: term count =", ncol(dtm), ", doc count =" nrow(dtm), "\n")
+dtm <- removeFrequentWords(dtm) #removing based on median tf-idf value
+cat("After tf-idf: term count =", ncol(dtm), ", doc count =" nrow(dtm), "\n")
+
+## build train and test sets
 # split the dataset
 # ~70% training / ~30% validation
 smpSize <- floor(0.70 * length(corp))
 
-## set the seed to make your partition reproductible
+#  set the seed to make your partition reproductible
 set.seed(123)
-trainInd <- sample(seq_len(length(corp)), size = smpSize)
+trainInd <- sample(seq_len(nrow(dtm)), size = smpSize)
 
-## Build a Document-Term Matrix
-dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
-cat("Before tf-idf: term count =", nrow(dtm), "\n")
-dtm <- removeFrequentWords(dtm) #removing based on median tf-idf value
-cat("After tf-idf: term count =", nrow(dtm), "\n")
-
-#build train and test sets
 train <- dtm[trainInd, ]
 test <- dtm[-trainInd, ]
 
