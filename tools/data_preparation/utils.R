@@ -51,12 +51,12 @@ createCorp <- function(readFromfileName, year, month){
   ## Load the data
   Posts <- read.delim(file = readFromfileName, header = T, quote = "", sep = "\t")
   
-  cat("Read", nrow(Posts), "rows from", readFrom, "\n")
+  cat("Read", nrow(Posts), "rows from", readFromfileName, "\n")
   
   if(! missing(year) && ! missing(month)){
     Posts$create_ts <- as.POSIXlt(Posts$create_ts)
     Posts <- subset(Posts, Posts$create_ts$mon == (month - 1) 
-           && Posts$create_ts$year == (year - 1900))
+           & Posts$create_ts$year == (year - 1900))
     cat("Kept", nrow(Posts), "rows\n")
   }
   

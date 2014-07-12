@@ -12,13 +12,13 @@ source("utils.R")
 args <- commandArgs(trailingOnly = TRUE)
 readFrom <- args[1]
 
-corp <- createCorp(readFrom)
+corp <- createCorp(readFrom, 2010, 9)
 
 ## Build a Document-Term Matrix
 dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
-cat("Before tf-idf: term count =", ncol(dtm), ", doc count =" nrow(dtm), "\n")
+cat("Before tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 dtm <- removeFrequentWords(dtm) #removing based on median tf-idf value
-cat("After tf-idf: term count =", ncol(dtm), ", doc count =" nrow(dtm), "\n")
+cat("After tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 
 ## build train and test sets
 # split the dataset
