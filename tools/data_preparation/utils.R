@@ -42,36 +42,35 @@ export2lda_c <- function(tdm, fileName){
 }
 
 ## This function reads the data from csv file, cleans it and returns tm text Corpus
-createCorp <- function(readFromfileName){
-  library(tm)
-  
-  ###############################################################################
-  # Setup Begin
-  ###############################################################################
-  #mininmal lenght of a word in the dictionary
-  minWordLenghtToKeep <- 4
-  ###############################################################################
-  # Setup End
-  ###############################################################################
-  
+## readFromfileName - name of the file to read from
+## Monthly Filter (optional):
+##   year  - optional: year when docs were created, format = YYYY
+##   month - optional: month when docs were created
+createCorp <- function(readFromfileName, year, month){
+  library(tm)  
   ## Load the data
-  #  Separator is set to \n to force 1 column per row. DataframeSource gets confused otherwise.
-  Posts <- read.delim(file = readFromfileName, header = T, quote = "", sep = "\n")
+  Posts <- read.delim(file = readFromfileName, header = T, quote = "", sep = "\t")
   
   cat("Read", nrow(Posts), "rows from", readFrom, "\n")
+  
+  if(! missing(year) && ! missing(month)){
+    Posts$create_ts <- as.POSIXlt(Posts$create_ts)
+    Posts <- subset(Posts, Posts$create_ts$mon == (month - 1) 
+           && Posts$create_ts$year == (year - 1900))
+    cat("Kept", nrow(Posts), "rows\n")
+  }
+  
+  # Concatenate columns, otherwise DataframeSource gets confused
+  Posts <- data.frame(paste(Posts$title, Posts$body, sep =" "))
+  
   ## Build a corpus
-  corp <- Corpus(DataframeSource(data.frame(Posts)))
+  corp <- Corpus(DataframeSource(Posts))
   
   ## Transform data
-  ## TODO: it seems that tm_map parallizes execution via duplication of R instances, 
-  ##   consuming lots of memory. If needed, we can use the functions below (e.g., stripWhitespace)
-  ##   directly.
-  corp = tm_map(corp, stripWhitespace) # Eliminate whitespace char
-  corp = tm_map(corp, removePunctuation) # Remove punctuation
-  corp = tm_map(corp, removeNumbers) # Eliminate numbers
   corp = tm_map(corp, removeWords, stopwords('english')) # Remove Stopwords
   corp = tm_map(corp, stemDocument) # Stemming
-
+  corp = tm_map(corp, stripWhitespace) # Eliminate whitespace char
+  
   cat ("Created corpus from", length(corp), "documents\n")
   return (corp)
 }
