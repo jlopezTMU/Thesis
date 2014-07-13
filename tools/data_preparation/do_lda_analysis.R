@@ -1,5 +1,6 @@
 ## Do basic LDA fit testing: split the dataset into testing and training (70/30)
-## Iterate over topic count (k) from 2 to 1000 and output perplexity for each k
+## Iterate over topic count (k) from 2 to document count 
+## and output perplexity for each k
 
 ## Install and load packages
 library(tm)
