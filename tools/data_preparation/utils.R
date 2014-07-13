@@ -98,3 +98,46 @@ removeFrequentWords <- function(dtm, threshold){
   dtm <- dtm[row_sums(dtm) > 0,]  #remove docs that have no terms remaining (unlikely event)
   return(dtm)
 }
+
+## This function performs k-fold validation of an LDA model
+## k - The number of validation folds
+## dat - Document Term Matrix to feed to the LDA model
+## topicCount - Number of topics in the LDA model
+doKfoldValidation <- function(k, dat, topicCount){
+  library(cvTools)
+  library(topicmodels)
+  
+  set.seed(123) #set seed for reproducibility
+  folds <- cvFolds(nrow(dat), K=k)
+  dat$holdoutpred <- rep(0,nrow(dat))
+  dat$perplexity_per_fold <- rep(NA,k)
+  
+  for(i in 1:k){
+    train <- dat[folds$subsets[folds$which != i], ] #Set the training set
+    validation <- dat[folds$subsets[folds$which == i], ] #Set the validation set
+    
+    train.lda <- LDA(train, topicCount) #train the model
+    
+    # uncommnet if doc - topics relation for the training set is required
+    # train.topics <- topics(train.lda)
+    
+    # get stats for validation docs
+    test.topics <- posterior(train.lda, validation) #get proibabilities per doc and topic
+    test.topics <- apply(test.topics$topics, 1, which.max) 
+    dat$holdoutpred[folds$subsets[folds$which == i]] <- test.topics #Put the hold out prediction in the data set for later use
+  
+    # uncomment if model paramaeters are needed
+    #mdl.alpha <- train.lda@alpha
+    #mdl.beta.mean <- mean(train.lda@beta)
+    #mdl.beta.sd <- sd(train.lda@beta)
+    
+    # get perplexity of the lda, based on validation set
+    dat$perplexity_per_fold[i] <- perplexity(train.lda, validation)
+  }
+  return ( list(
+      perplexity.mean = mean(dat$perplexity_per_fold)
+    , perplexity.sd = sd(dat$perplexity_per_fold)
+    , perplexity.se = sd(dat$perplexity_per_fold) 
+        / sqrt(length(dat$perplexity_per_fold))
+  ))
+}
