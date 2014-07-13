@@ -32,16 +32,20 @@ trainInd <- sample(seq_len(nrow(dtm)), size = smpSize)
 train <- dtm[trainInd, ]
 test <- dtm[-trainInd, ]
 
+# uncomment if you need to export a dataset to lda-c
+#export2lda_c(train, "Posts.xml.w_ts.csv.2012-02.lda-c")
+
 #setup parallel backend to use 8 processors
 cl<-makeCluster(8)
 registerDoParallel(cl)
 
-cat("topicCount\tperp\talpha\tbeta.mean\tbeta.sd\tbeta.se\n", sep="\t", append = T
+cat("topicCount\tperp\talpha\tbeta.mean\tbeta.sd\tbeta.se\ttime (sec)\n", sep="\t", append = T
     , file = paste(readFrom, ".perplexity", sep="")) # to file
 
 foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
         , .packages='topicmodels' #include package
 ) %dopar% { #change to %do% for sequential execution
+  startRun <- Sys.time()
   lda <- LDA(train, topicCount)
   perp <- perplexity(lda, test)
   
@@ -53,7 +57,7 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
   mdl.beta.se <- sd(lda@beta) / sqrt(ncol(lda@beta) * nrow(lda@beta))
   
   cat(topicCount, perp, "\n", sep="\t") #to screen (no screen output is parallel mode)
-  cat(topicCount, perp, mdl.alpha, mdl.beta.mean, mdl.beta.sd, mdl.beta.se
+  cat(topicCount, perp, mdl.alpha, mdl.beta.mean, mdl.beta.sd, mdl.beta.se, (Sys.time() - startRun)
       , "\n", sep="\t", append = T
       , file = paste(readFrom, ".perplexity", sep="")) # to file
 }
