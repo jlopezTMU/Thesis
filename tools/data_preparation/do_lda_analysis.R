@@ -58,7 +58,8 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
   mdl.beta.se <- sd(lda@beta) / sqrt(ncol(lda@beta) * nrow(lda@beta))
   
   cat(topicCount, perp, "\n", sep="\t") #to screen (no screen output is parallel mode)
-  cat(topicCount, perp, mdl.alpha, mdl.beta.mean, mdl.beta.sd, mdl.beta.se, (Sys.time() - startRun)
+  cat(topicCount, perp, mdl.alpha, mdl.beta.mean, mdl.beta.sd, mdl.beta.se
+      , difftime(Sys.time(), startRun, units = "secs")
       , "\n", sep="\t", append = T
       , file = paste(readFrom, ".perplexity", sep="")) # to file
 }
