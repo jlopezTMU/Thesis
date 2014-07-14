@@ -13,7 +13,7 @@ source("utils.R")
 args <- commandArgs(trailingOnly = TRUE)
 readFrom <- args[1]
 
-corp <- createCorp(readFrom, 2010, 9)
+corp <- createCorp(readFrom, 2012, 2)
 
 foldCount <- 10 #number of fold in k-fold validation
 
@@ -40,9 +40,8 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
 
   val <- doKfoldValidation(foldCount, dtm, topicCount)
 
-  cat(topicCount, val$perp, "\n", sep="\t") #to screen (no screen output is parallel mode)
-  cat(topicCount, perp, mdl.alpha, mdl.beta.mean, mdl.beta.sd, mdl.beta.se
-      , difftime(Sys.time(), startRun, units = "secs")
+  cat(topicCount, val$perplexity.mean, "\n", sep="\t") #to screen (no screen output is parallel mode)
+  cat(topicCount, val$perplexity.mean, val$perplexity.sd, val$perplexity.se, difftime(Sys.time(), startRun, units = "secs")
       , "\n", sep="\t", append = T
       , file = paste(readFrom, ".perplexity", sep="")) # to file
 }
