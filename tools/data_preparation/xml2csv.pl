@@ -63,6 +63,8 @@ sub transform {
 sub getAnswersText {
 	my ( $questionId, $minVote, $AcceptedAnswerId ) = @_;
 	my $answers = "";
+
+#this is an inefficient solution, may need to construct an index instead of iterating over and over
 	foreach ( @{ $ref->{row} } ) {
 		if (
 			(
@@ -70,7 +72,9 @@ sub getAnswersText {
 				and ( $_->{ParentId} eq $questionId )    #answer to question $questionId
 				and ( ( $_->{Score} + 0 ) >= $minVote )  #minimal vote
 			)
-			or ( $_->{Id} eq $AcceptedAnswerId )         #always get accepted answer
+			or (                                         #always get accepted answer
+				defined($AcceptedAnswerId) and ( $_->{Id} eq $AcceptedAnswerId )
+			)
 		  )
 		{
 			$answers .= transform( $hs->parse( $_->{Body} ) ) . " ";
