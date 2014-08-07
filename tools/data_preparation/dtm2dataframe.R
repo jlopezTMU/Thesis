@@ -1,7 +1,4 @@
 library(tm)
-library(topicmodels)
-library(foreach)
-library(doParallel)
 
 source("utils.R")
 
@@ -12,7 +9,7 @@ saveTo <-  args[2]
 corp <- createCorp(readFrom, 2012, 2)
 
 ## Build a Document-Term Matrix
-dtm <- ç(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
+dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
 cat("Before tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 dtm <- removeFrequentWords(dtm) #removing based on median tf-idf value
 cat("After tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
