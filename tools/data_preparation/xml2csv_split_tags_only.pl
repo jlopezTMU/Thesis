@@ -46,8 +46,13 @@ foreach ( @{ $ref->{row} } ) {
 		#$tags =~ s/>$//g;
 
 		$tags = transform( $_->{Tags} );
-		$tags =~ tr/ +/ /;    #replace multiple spaces with a single one
-		$tags = join( "^&^", uniq( split( / /, $tags ) ) );    #keep only unique words
+		$tags =~ tr/ +/ /;                           #replace multiple spaces with a single one
+
+		my @tmp = split / /, $tags;
+		@tmp = grep !/^\d+$/, @tmp;                  #remove numeric "words"
+		@tmp = uniq(@tmp);                           #keep only unique words
+
+		$tags = join( "^&^", @tmp );
 
 		print $fid join( "\t", ( $creationDate, $id, $tags ) ) . "\n";
 	}
