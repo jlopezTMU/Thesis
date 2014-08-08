@@ -63,7 +63,7 @@ createCorp <- function(readFromfileName, year, month){
   }
   
   # Concatenate columns, otherwise DataframeSource gets confused
-  Posts <- data.frame(paste(Posts$title, Posts$body, sep =" "))
+  Posts <- data.frame(paste(Posts$title, Posts$body, Posts$answers, sep =" "))
   
   ## Build a corpus
   corp <- Corpus(DataframeSource(Posts))
