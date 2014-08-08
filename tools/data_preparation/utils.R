@@ -1,3 +1,5 @@
+library(topicmodels)
+
 ## The function takes term document matrix (sparse representation), tdm, and exports it to file
 ## fileName in the following format "distinctWordCount wordId:WordCount ...", one document per 
 ## line. For example, "2 15:7 21:4" means that a document contains two distinct words 
@@ -105,7 +107,6 @@ removeFrequentWords <- function(dtm, threshold){
 ## topicCount - Number of topics in the LDA model
 doKfoldValidation <- function(k, dat, topicCount){
   library(cvTools)
-  library(topicmodels)
   
   set.seed(123) #set seed for reproducibility
   folds <- cvFolds(nrow(dat), K=k)
@@ -134,10 +135,29 @@ doKfoldValidation <- function(k, dat, topicCount){
     # get perplexity of the lda, based on validation set
     dat$perplexity_per_fold[i] <- perplexity(train.lda, validation)
   }
+  
   return ( list(
       perplexity.mean = mean(dat$perplexity_per_fold)
     , perplexity.sd = sd(dat$perplexity_per_fold)
     , perplexity.se = sd(dat$perplexity_per_fold) 
         / sqrt(length(dat$perplexity_per_fold))
   ))
+}
+
+## This function returns frequency of topics for a given LDA model
+## dat - Document Term Matrix to feed to the LDA model
+## topicCount - Number of topics in the LDA model
+getTopicsFrequency <- function(dat, topicCount){
+  mdl <- LDA(dat, topicCount) #LDA model
+  
+  mdl.alpha <- mdl@alpha
+  mdl.beta.mean <- mean(mdl@beta)
+  mdl.beta.sd <- sd(mdl@beta)
+  
+  return( list(
+    mdl.alpha = mdl.alpha, 
+    mdl.beta.mean = mdl.beta.mean, 
+    mdl.beta.sd = mdl.beta.sd,
+    topic.frequency = as.vector(table(topics( mdl )))
+    ))
 }
