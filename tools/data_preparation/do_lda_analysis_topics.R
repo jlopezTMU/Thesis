@@ -9,6 +9,7 @@ readFrom <- args[1]
 saveTo <-  args[2]
 
 corp <- createCorp(readFrom, 2012, 2)
+fileSuffix <- ".topic_frequency"
 
 ## Build a Document-Term Matrix
 dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
@@ -21,7 +22,7 @@ cl<-makeCluster(8)
 registerDoParallel(cl)
 
 cat("topicCount\tmdl.alpha\tmdl.beta.mean\tmdl.beta.sd\ttime (sec)\ttopic.frequency\n", sep="\t", append = T
-    , file = paste(readFrom, ".topic_distr", sep="")) # to file
+    , file = paste(readFrom, fileSuffix, sep="")) # to file
 
 foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
         , .packages='topicmodels' #include package
@@ -37,7 +38,7 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
   for (i in 1:length(val$topic.frequency)){
     cat(prefix, val$topic.frequency[i]
         , "\n", sep="\t", append = T
-        , file = paste(readFrom, ".term_fequency", sep="")) # to file
+        , file = paste(readFrom, fileSuffix, sep="")) # to file
   }
       
 }
