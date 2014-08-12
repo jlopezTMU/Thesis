@@ -22,6 +22,9 @@ dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words o
 cat("Before tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 dtm <- removeFrequentWords(dtm) #removing based on median tf-idf value
 cat("After tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
+dtm <- removeSparseTerms(dtm, 1 - (1.1/nrow(dtm)) )  #remove terms appearing only in 1 document
+cat("After removing terms appearing only in 1 document: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
+
 
 # uncomment if you need to export a dataset to lda-c
 #export2lda_c(train, "Posts.xml.w_ts.csv.2012-02.lda-c")
