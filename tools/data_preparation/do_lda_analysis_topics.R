@@ -1,3 +1,8 @@
+## The script reads posts in delimited format, and generates 
+## distribution of LDA topics for a given month year,
+## saving the output in in_file_name + ".year-month.lda-c"
+## Usage: Rscript export_to_lda-c.R in_file_name year month
+
 library(tm)
 library(foreach)
 library(doParallel)
@@ -6,9 +11,12 @@ source("utils.R")
 
 args <- commandArgs(trailingOnly = TRUE)
 readFrom <- args[1]
-saveTo <-  args[2]
+year  <-  as.integer(args[2]) 
+month <-  as.integer(args[3])
 
-corp <- createCorp(readFrom, 2012, 2)
+saveTo <- paste(readFrom, ".", year, "-", month, ".topic_frequency", sep ="")
+
+corp <- createCorp(readFrom, year, month)
 fileSuffix <- ".topic_frequency"
 
 ## Build a Document-Term Matrix
@@ -22,7 +30,7 @@ cl<-makeCluster(8)
 registerDoParallel(cl)
 
 cat("topicCount\tmdl.alpha\tmdl.beta.mean\tmdl.beta.sd\ttime (sec)\ttopic.frequency\n", sep="\t", append = T
-    , file = paste(readFrom, fileSuffix, sep="")) # to file
+    , file = saveTo) # to file
 
 foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
         , .packages='topicmodels' #include package
@@ -38,7 +46,10 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
   for (i in 1:length(val$topic.frequency)){
     cat(prefix, val$topic.frequency[i]
         , "\n", sep="\t", append = T
-        , file = paste(readFrom, fileSuffix, sep="")) # to file
+        , file = saveTo) # to file
   }
       
 }
+cat("Saved data to", saveTo, "\n")
+cat("Done\n")
+
