@@ -1,10 +1,9 @@
-## Do basic LDA fit testing: using k-fold validation
-## Iterate over topic count (k) from 2 to max number of docs 
-## and output average perplexity for each k
+## The script reads posts in delimited format, and generates 
+## distribution of LDA topics for a given quarter-year,
+## saving the output in in_file_name + "." + year "-q" + quarter ".topic_frequency"
+## Usage: Rscript export_to_lda-c.R in_file_name year month
 
-## Install and load packages
 library(tm)
-library(topicmodels)
 library(foreach)
 library(doParallel)
 
@@ -12,10 +11,12 @@ source("utils.R")
 
 args <- commandArgs(trailingOnly = TRUE)
 readFrom <- args[1]
+year  <-  as.integer(args[2])
+quarter <-  as.integer(args[3])
 
-corp <- createCorp(readFrom, 2012, 2)
+saveTo <- paste(readFrom, ".", year, "-q", quarter, ".topic_frequency", sep ="")
 
-foldCount <- 10 #number of fold in k-fold validation
+corp <- createCorpQuarter(readFrom, year, quarter)
 
 ## Build a Document-Term Matrix
 dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
@@ -26,26 +27,31 @@ dtm <- removeSparseTerms(dtm, 1 - (1.1/nrow(dtm)) )  #remove terms appearing onl
 dtm <- dtm[row_sums(dtm) > 0,]  #remove docs that have no terms remaining (unlikely event)
 cat("After removing terms appearing only in 1 document: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 
-
-# uncomment if you need to export a dataset to lda-c
-#export2lda_c(train, "Posts.xml.w_ts.csv.2012-02.lda-c")
-
 #setup parallel backend to use 8 processors
 cl<-makeCluster(8)
 registerDoParallel(cl)
 
-cat("topicCount\tperp.mean\tperp.sd\tperp.se\ttime (sec)\n", sep="\t", append = T
-    , file = paste(readFrom, ".perplexity", sep="")) # to file
+cat("topicCount\tmdl.alpha\tmdl.beta.mean\tmdl.beta.sd\ttime (sec)\ttopic.frequency\n", sep="\t", append = T
+    , file = saveTo) # to file
 
 foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
         , .packages='topicmodels' #include package
 ) %dopar% { #change to %do% for sequential execution
   startRun <- Sys.time()
-
-  val <- doKfoldValidation(foldCount, dtm, topicCount)
-
-  cat(topicCount, val$perplexity.mean, "\n", sep="\t") #to screen (no screen output is parallel mode)
-  cat(topicCount, val$perplexity.mean, val$perplexity.sd, val$perplexity.se, difftime(Sys.time(), startRun, units = "secs")
-      , "\n", sep="\t", append = T
-      , file = paste(readFrom, ".perplexity", sep="")) # to file
+  
+  val <- getTopicsFrequency(dtm, topicCount)
+  
+  prefix <- paste(topicCount, val$mdl.alpha, val$mdl.beta.mean, val$mdl.beta.sd, difftime(Sys.time(), startRun, units = "secs"), sep="\t")
+  
+  cat(topicCount, "\n") #to screen (no screen output is parallel mode)
+  
+  for (i in 1:length(val$topic.frequency)){
+    cat(prefix, val$topic.frequency[i]
+        , "\n", sep="\t", append = T
+        , file = saveTo) # to file
+  }
+      
 }
+cat("Saved data to", saveTo, "\n")
+cat("Done\n")
+
