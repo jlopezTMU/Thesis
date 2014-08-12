@@ -17,7 +17,6 @@ month <-  as.integer(args[3])
 saveTo <- paste(readFrom, ".", year, "-", month, ".topic_frequency", sep ="")
 
 corp <- createCorp(readFrom, year, month)
-fileSuffix <- ".topic_frequency"
 
 ## Build a Document-Term Matrix
 dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
