@@ -1,6 +1,6 @@
 ## The script reads posts in delimited format, and generates 
 ## distribution of LDA topics for a given month year,
-## saving the output in in_file_name + ".year-month.lda-c"
+## saving the output in in_file_name + ".year-month.topic_frequency"
 ## Usage: Rscript export_to_lda-c.R in_file_name year month
 
 library(tm)
