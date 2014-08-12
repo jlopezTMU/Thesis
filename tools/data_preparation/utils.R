@@ -45,6 +45,31 @@ export2lda_c <- function(tdm, fileName){
 
 ## This function reads the data from csv file, cleans it and returns tm text Corpus
 ## readFromfileName - name of the file to read from
+## Quarterly Filter (mandatory):
+##   year  - mandatory: year when docs were created, format = YYYY
+##   month - mandatory: month when docs were created
+createCorpQuarter <- function(readFromfileName, year, quarter){
+  library(tm)
+  ## Load the data
+  Posts <- read.delim(file = readFromfileName, header = T, quote = "", sep = "\t")
+  
+  cat("Read", nrow(Posts), "rows from", readFromfileName, "\n")
+  
+  if(! missing(year) & ! missing(quarter)){
+    Posts$create_ts <- as.POSIXlt(Posts$create_ts)
+    Posts <- subset(Posts, quarters(Posts$create_ts) == paste("Q", quarter, sep = "")
+                    & Posts$create_ts$year == (year - 1900))
+    cat("Kept", nrow(Posts), "rows\n")
+  }else{
+    stop("Provide year and quarter")
+  }
+  
+  return( doCorpCreation(Posts) )
+}
+
+
+## This function reads the data from csv file, cleans it and returns tm text Corpus
+## readFromfileName - name of the file to read from
 ## Monthly Filter (optional):
 ##   year  - optional: year when docs were created, format = YYYY
 ##   month - optional: month when docs were created
@@ -55,13 +80,18 @@ createCorp <- function(readFromfileName, year, month){
   
   cat("Read", nrow(Posts), "rows from", readFromfileName, "\n")
   
-  if(! missing(year) && ! missing(month)){
+  if(! missing(year) & ! missing(month)){
     Posts$create_ts <- as.POSIXlt(Posts$create_ts)
     Posts <- subset(Posts, Posts$create_ts$mon == (month - 1) 
            & Posts$create_ts$year == (year - 1900))
     cat("Kept", nrow(Posts), "rows\n")
   }
   
+  return( doCorpCreation(Posts) )
+}
+
+## this is a private function for corpus creation
+doCorpCreation <- function(Posts){
   # Concatenate columns, otherwise DataframeSource gets confused
   Posts <- data.frame(paste(Posts$title, Posts$body, Posts$answers, sep =" "))
   
