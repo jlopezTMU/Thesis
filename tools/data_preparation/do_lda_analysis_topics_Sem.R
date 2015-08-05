@@ -16,7 +16,8 @@ source("utils.R")
 ## year  <-  as.integer(args[2]) 
 ## month <-  as.integer(args[3])
 
-Semaphore <- 0
+## Semaphore <- 0
+file.remove("semaf")
 
 readFrom <- "posts.xml.csv" ## JL Hard coded input file name
 year  <-  2014              ## JL 
@@ -45,7 +46,7 @@ cat("topicCount\tmdl.alpha\tmdl.beta.mean\tmdl.beta.sd\ttime (sec)\ttopic.freque
 
 foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
         , .packages='topicmodels' #include package
-) %dopar% { #changed to %dopar% 
+) %dopar% { #changed to %dopar% for parallel processing
   startRun <- Sys.time()
   
   val <- getTopicsFrequency(dtm, topicCount)
@@ -57,14 +58,16 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
   ## create Semaphore
   
   for (i in 1:length(val$topic.frequency)){
-    while (Semaphore == 1) {Sys.sleep(1); cat("in while sleeping 1 sec\n");}
-    Semaphore <- 1
-    cat("in cat for",i,Sys.time(),"Semaphore is:", Semaphore, "\n") ## JL just to see what happens in this loop
+    while (file.exists("semaf")==TRUE) {Sys.sleep(1); cat("in while sleeping 1 sec\n");}
+    
+    file.create("semaf")
+    cat("in cat for",i,Sys.time(), file.exists("semaf"), "\n") ## JL just to see what happens in this loop
     cat(prefix, val$topic.frequency[i]
         , "\n", sep="\t", append = T
         , file = saveTo) # to file
-    Semaphore <- 0 
-    cat("Semaphore is", Semaphore, "\n")
+     
+    file.remove("semaf")
+    cat("Semaphore is",file.exists("semaf"), "\n")
        }
    
 }
