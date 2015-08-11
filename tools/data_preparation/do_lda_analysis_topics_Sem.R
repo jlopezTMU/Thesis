@@ -17,7 +17,8 @@ source("utils.R")
 ## month <-  as.integer(args[3])
 
 ## Semaphore <- 0
-if( file.exists("semaf") ){ file.remove("semaf") } 
+semaphoreFileName <- "semaf"
+if( file.exists(semaphoreFileName) ){ file.remove("semaf") } 
 
 readFrom <- "posts.xml.csv" ## JL Hard coded input file name
 year  <-  2014              ## JL 
@@ -58,16 +59,16 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
   ## create Semaphore
   
   for (i in 1:length(val$topic.frequency)){
-    while (file.exists("semaf")==TRUE) {Sys.sleep(1); cat("in while sleeping 1 sec\n");}
+    while (file.exists(semaphoreFileName)==TRUE) {Sys.sleep(1); cat("in while sleeping 1 sec\n");}
     
-    file.create("semaf")
-    cat("in cat for",i,Sys.time(), file.exists("semaf"), "\n") ## JL just to see what happens in this loop
+    file.create(semaphoreFileName)
+    cat("in cat for",i,Sys.time(), file.exists(semaphoreFileName), "\n") ## JL just to see what happens in this loop
     cat(prefix, val$topic.frequency[i]
         , "\n", sep="\t", append = T
         , file = saveTo) # to file
      
-    file.remove("semaf")
-    cat("Semaphore is",file.exists("semaf"), "\n")
+    file.remove(semaphoreFileName)
+    cat("Semaphore is",file.exists(semaphoreFileName), "\n")
        }
    
 }
