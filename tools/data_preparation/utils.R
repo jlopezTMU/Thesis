@@ -99,6 +99,7 @@ doCorpCreation <- function(Posts){
   corp <- Corpus(DataframeSource(Posts))
   
   ## Transform data
+  corp = tm_map(corp, content_transformer(tolower)) #converting to lower case
   corp = tm_map(corp, removeWords, stopwords('english')) # Remove Stopwords
   corp = tm_map(corp, stemDocument) # Stemming
   corp = tm_map(corp, stripWhitespace) # Eliminate whitespace char
