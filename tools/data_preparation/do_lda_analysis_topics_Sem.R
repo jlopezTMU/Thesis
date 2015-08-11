@@ -17,7 +17,7 @@ source("utils.R")
 ## month <-  as.integer(args[3])
 
 ## Semaphore <- 0
-file.remove("semaf")
+if( file.exists("semaf") ){ file.remove("semaf") } 
 
 readFrom <- "posts.xml.csv" ## JL Hard coded input file name
 year  <-  2014              ## JL 
