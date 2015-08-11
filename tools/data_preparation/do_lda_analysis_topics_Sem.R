@@ -18,7 +18,7 @@ source("utils.R")
 
 ## Semaphore <- 0
 semaphoreFileName <- "semaf"
-if( file.exists(semaphoreFileName) ){ file.remove("semaf") } 
+if( file.exists(semaphoreFileName) ){ file.remove(semaphoreFileName) } 
 
 readFrom <- "posts.xml.csv" ## JL Hard coded input file name
 year  <-  2014              ## JL 
