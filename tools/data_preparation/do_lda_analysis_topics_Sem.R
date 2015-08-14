@@ -17,7 +17,7 @@ source("utils.R")
 ## month <-  as.integer(args[3])
 
 ## Semaphore <- 0
-semaphoreFileName <- "semaf"
+semaphoreFileName <- paste("semaf_", Sys.getpid(), sep='') # append R's process id to semaphore to avoid conflict
 if( file.exists(semaphoreFileName) ){ file.remove(semaphoreFileName) } 
 
 readFrom <- "posts.xml.csv" ## JL Hard coded input file name
