@@ -1,4 +1,3 @@
-
 ## The script reads posts in delimited format, and generates 
 ## distribution of LDA topics for a given month year,
 ## saving the output in in_file_name + ".year-month.topic_frequency"
