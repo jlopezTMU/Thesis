@@ -4,6 +4,7 @@
 ## Usage: Rscript export_to_lda-c.R in_file_name year month
 ##
 ## This version adds a Semaphore in order to slowdown the process of writing in a parallel processing
+## Version for running in Linux
 
 library(tm)
 library(foreach)
@@ -20,7 +21,7 @@ month <-  as.integer(args[3])
 semaphoreFileName <- paste("semaf_", Sys.getpid(), sep='') # append R's process id to semaphore to avoid conflict
 if( file.exists(semaphoreFileName) ){ file.remove(semaphoreFileName) } 
 
-## readFrom <- "posts.xml.csv" ## JL Hard coded input parms. for running in non-linux environment
+## readFrom <- "posts.xml.csv" ## JL Uncomment for running in non-linux environment
 ## year  <-  2014              ## JL 
 ## month <-  12                ## JL
 
@@ -34,7 +35,7 @@ cat("Before tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 dtm <- removeFrequentWords(dtm) #removing based on median tf-idf value
 cat("After tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 ## the following line commented out to avoid sparse error
-## dtm <- removeSparseTerms(dtm, 1 - (1.1/nrow(dtm)) )  #remove terms appearing only in 1 document
+dtm <- removeSparseTerms(dtm, 1 - (1.1/nrow(dtm)) )  #remove terms appearing only in 1 document
 dtm <- dtm[row_sums(dtm) > 0,]  #remove docs that have no terms remaining (unlikely event)
 cat("After removing terms appearing only in 1 document: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 
@@ -47,7 +48,7 @@ cat("topicCount\tmdl.alpha\tmdl.beta.mean\tmdl.beta.sd\ttime (sec)\ttopic.freque
 
 foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
         , .packages='topicmodels' #include package
-) %dopar% { #changed to %dopar% for parallel processing
+) %dopar% { #change to %do% for sequential execution
   startRun <- Sys.time()
   
   val <- getTopicsFrequency(dtm, topicCount)
@@ -58,22 +59,18 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
   ## while Semaphore is true, sleep for 1 sec. 
   ## create Semaphore
   
+  while (file.exists(semaphoreFileName)==TRUE) {Sys.sleep(1); cat("in while sleeping 1 sec\n");}
+  file.create(semaphoreFileName)
+  
   for (i in 1:length(val$topic.frequency)){
-    while (file.exists(semaphoreFileName)==TRUE) {Sys.sleep(1); cat("in while sleeping 1 sec\n");}
-    
-    file.create(semaphoreFileName)
+  
     cat("in cat for",i,Sys.time(), file.exists(semaphoreFileName), "\n") ## JL just to see what happens in this loop
     cat(prefix, val$topic.frequency[i]
         , "\n", sep="\t", append = T
         , file = saveTo) # to file
-     
-    file.remove(semaphoreFileName)
-    cat("Semaphore is",file.exists(semaphoreFileName), "\n")
-       }
-   
+  }
+  file.remove(semaphoreFileName)
+  cat("Semaphore is",file.exists(semaphoreFileName), "\n")   
 }
 cat("Saved data to", saveTo, "\n")
 cat("Done\n")
-
-
-
