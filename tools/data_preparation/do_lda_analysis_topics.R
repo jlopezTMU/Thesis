@@ -5,6 +5,7 @@
 ##
 ## This version adds a Semaphore in order to slowdown the process of writing in a parallel processing
 ## Version for running in Linux
+## This is a change to test the tracking of changes 8-26-2015 JL
 
 library(tm)
 library(foreach)
