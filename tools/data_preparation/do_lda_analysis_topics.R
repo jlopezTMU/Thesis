@@ -4,7 +4,7 @@
 ## Usage: Rscript export_to_lda-c.R in_file_name year month
 ##
 ## This version adds a Semaphore in order to slowdown the process of writing in a parallel processing
-## Version for running in Linux
+## Version for running in Linux 8-27-25
 ## This is a change to test the tracking of changes 8-26-2015 JL
 
 library(tm)
