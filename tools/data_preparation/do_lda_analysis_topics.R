@@ -66,7 +66,7 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
             , "\n", sep="\t", append = T
             , file = saveTo) # to file
   }
-  file.remove(semaphoreFileName)
+  file.remove(semaphoreFileName) ## unlock file
   cat("Semaphore is",file.exists(semaphoreFileName), "\n")
  }
 cat("Saved data to", saveTo, "\n")
