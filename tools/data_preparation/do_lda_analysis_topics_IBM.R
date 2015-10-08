@@ -38,8 +38,8 @@ cat("Before tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 ## Dr. M. 10/2/15 dtm <- removeFrequentWords(dtm) #removing based on median tf-idf value
 cat("After tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 ## the following line commented out to avoid sparse error
-## as per Dr dtm <- removeSparseTerms(dtm, 1 - (1.1/nrow(dtm)) )  #remove terms appearing only in 1 document
-## to avoid error dtm <- dtm[row_sums(dtm) > 0,]  #remove docs that have no terms remaining (unlikely event)
+dtm <- removeSparseTerms(dtm, 1 - (1.1/nrow(dtm)) )  #remove terms appearing only in 1 document/ uncommented as per Dr
+dtm <- dtm[row_sums(dtm) > 0,]  #remove docs that have no terms remaining (unlikely event)/ uncommented as per Dr
 cat("After removing terms appearing only in 1 document: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 
 #setup parallel backend to use 8 processors
@@ -51,14 +51,14 @@ registerDoParallel(cl)
 ## NA  , file = saveTo) # to file
 
 ## original foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
-foreach(topicCount = 1:5 #max = 1 topic per document
+foreach(topicCount = c(5,10) #max = 1 topic per document
         , .packages='topicmodels' #include package
 ) %do% 
 { #change to %dopar% for parallel execution
   startRun <- Sys.time()
   
   mdl <- LDA(dtm, 5) #LDA model / set topicCounthelp to 5 because this var is not found!
-  
+                     # IF 5 is replaced by topicCounthelp, then this var is not found
   topic.keyword <- terms(mdl[["VEM"]],5) ## topicCount set to 5
   
   ##val <- getTopicsKeyword(dtm, topicCount) ## JL changed to getTopicKeyword
