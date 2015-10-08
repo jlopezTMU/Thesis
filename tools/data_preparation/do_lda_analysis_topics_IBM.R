@@ -8,6 +8,7 @@
 ##
 ## This version is for extracting the topic keywords not the frequencies
 ## This is being debugged currently
+## 10/8/15 11:34
 
 library(tm)
 library(foreach)
