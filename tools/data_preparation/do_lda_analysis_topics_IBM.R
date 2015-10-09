@@ -8,14 +8,14 @@ library(doParallel)
 
 source("utils.R")
 
-##args <- commandArgs(trailingOnly = TRUE)
-##readFrom <- args[1]
+args <- commandArgs(trailingOnly = TRUE)
+readFrom <- args[1]
 ##year  <-  as.integer(args[2]) 
 ##month <-  as.integer(args[3])
 
 topKeywordCount <- 20
 
-readFrom <- "../../data/sample_posts/Posts.xml.csv" ## JL Hard coded input parms. for running in non-linux environment
+#readFrom <- "../../data/sample_posts/Posts.xml.csv" ## JL Hard coded input parms. for running in non-linux environment
 #year  <-  2014              ## JL 
 #month <-  12                ## JL
 
