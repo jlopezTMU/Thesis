@@ -1,6 +1,6 @@
 
 #!/bin/bash
-for YEAR in 2012 2013 
+for YEAR in 2012 2013 2014
 do
 	for QUARTER in {1..4} 
 	do
