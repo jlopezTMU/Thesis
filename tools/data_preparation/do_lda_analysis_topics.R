@@ -61,13 +61,13 @@ foreach(topicCount = 2:nrow(dtm) #max = 1 topic per document
   }
   file.create(semaphoreFileName) ## lock file
   for (i in 1:length(val$topic.frequency)){
-       cat("in cat for",i,Sys.time(), file.exists(semaphoreFileName), "\n") ## JL just to see what happens in this loop
+       #cat("in cat for",i,Sys.time(), file.exists(semaphoreFileName), "\n") ## JL just to see what happens in this loop
        cat(prefix, val$topic.frequency[i]
             , "\n", sep="\t", append = T
             , file = saveTo) # to file
   }
   file.remove(semaphoreFileName) ## unlock file
-  cat("Semaphore is",file.exists(semaphoreFileName), "\n")
+  #cat("Semaphore is",file.exists(semaphoreFileName), "\n")
  }
 cat("Saved data to", saveTo, "\n")
 cat("Done\n")
