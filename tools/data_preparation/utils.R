@@ -192,3 +192,42 @@ getTopicsFrequency <- function(dat, topicCount){
     topic.frequency = as.vector(table(topics( mdl )))
     ))
 }
+incCalc <- function(totCount) {
+  ## Function to calculate increments, 2..100, 1 101..200 5, 201..300 10 ... capped to 25 after totCount >= 600 to 25
+  numRanges <- round(totCount/100)
+  vecRanges = matrix(nrow = 1, ncol = numRanges)
+  vecCount <- c()
+  MRanges <- matrix(nrow = numRanges,ncol = 2)
+  ix <- 1
+  
+  maxCount <- 1
+  cat("numRanges=", numRanges, "\n")
+  for(i in 1:numRanges){
+    indI <- (100*i)-100+1
+    indJ <- 100*i
+    
+    MRanges[i,1] <- indI
+    MRanges[i,2] <- indJ
+    
+    cat("i=", i, "from=", MRanges[i,1], "to ", MRanges[i,2])
+    
+    cat ("indI=", indI, "indJ=", indJ, "i=", i, "\n")
+    
+    p <- i
+    
+    if (p > 1 && p < 7) {p <- 5*(i-1)} else {if (p!=1){p <-25}}
+    
+    cat("p=",p,"\n")
+    
+    for (j in seq(from=MRanges[i,1], to=MRanges[i,2], by=p)){
+      
+      vecCount[ix] <- j
+      maxCount <- ix
+      cat("vecCount[", ix, "]=", vecCount[ix], "\n")
+      
+      ix <- ix + 1
+    }
+    cat("maxCount=", maxCount, "\n")
+  }
+  return(vecCount)
+}
