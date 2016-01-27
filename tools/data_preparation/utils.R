@@ -194,7 +194,7 @@ getTopicsFrequency <- function(dat, topicCount){
 }
 incCalc <- function(totCount) {
   ## Function to calculate increments, 2..100, 1 101..200 5, 201..300 10 ... capped to 25 after totCount >= 600 to 25
-  numRanges <- round(totCount/100)
+  numRanges <- ceiling(totCount/100) ## this is to ensure that if goes beyond 100's it is taken into account
   vecRanges = matrix(nrow = 1, ncol = numRanges)
   vecCount <- c()
   MRanges <- matrix(nrow = numRanges,ncol = 2)
@@ -221,11 +221,13 @@ incCalc <- function(totCount) {
     
     for (j in seq(from=MRanges[i,1], to=MRanges[i,2], by=p)){
       
-      vecCount[ix] <- j
-      maxCount <- ix
-      cat("vecCount[", ix, "]=", vecCount[ix], "\n")
-      
-      ix <- ix + 1
+      if ( j < totCount ) { ## This is to limit the calculation of intervals up to totCount
+          vecCount[ix] <- j
+          maxCount <- ix
+          cat("j =", j, "\n")
+          cat("vecCount[", ix, "]=", vecCount[ix], "\n")
+          ix <- ix + 1
+      }  
     }
     cat("maxCount=", maxCount, "\n")
   }
