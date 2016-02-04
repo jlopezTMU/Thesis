@@ -70,10 +70,10 @@ createCorpQuarter <- function(readFromfileName, year, quarter){
 
 ## This function reads the data from csv file, cleans it and returns tm text Corpus
 ## readFromfileName - name of the file to read from
-## Monthly Filter (optional):
+##   year filter
 ##   year  - optional: year when docs were created, format = YYYY
-##   month - optional: month when docs were created
-createCorp <- function(readFromfileName, year, month){
+##  
+createCorp <- function(readFromfileName, year){
   cat("@ createCorp \n")
   library(tm)
   ## Load the data
@@ -82,10 +82,10 @@ createCorp <- function(readFromfileName, year, month){
   cat("Read", nrow(Posts), "rows from", readFromfileName, "\n")
   cat("year to process =", year, "\n")
 
-  if(! missing(year) & ! missing(month)){
+## the following lines tweaked to filter by year
+  if(! missing(year)){
     Posts$create_ts <- as.POSIXlt(Posts$create_ts)
-    Posts <- subset(Posts, Posts$create_ts$mon == (month - 1)
-                    & Posts$create_ts$year == (year - 1900))
+    Posts <- subset(Posts, Posts$create_ts$year == (year - 1900))
     cat("Kept", nrow(Posts), "rows\n")
   }
 
