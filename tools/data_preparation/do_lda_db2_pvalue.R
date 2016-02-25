@@ -51,7 +51,7 @@ foreach(topicCount = c(5) #max = 1 topic per document ## changed topic count=5
 ############################ code added ####################################################################
   for (i in 1:topKeywordCount){
      for (j in 1:topicCount) {
-          topic.keyword[i,j] <- paste(topic.keyword[i,j], mdl.post$terms[[j,i]])
+          topic.keyword[i,j] <- paste(topic.keyword[i,j], mdl.post$terms[[j, topic.keyword[i,j]]])
           cat("This is the P-Value for  term:", i, ":", j, ">", topic.keyword[i,j], "\n")
      }
   }
