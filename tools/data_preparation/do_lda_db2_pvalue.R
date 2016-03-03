@@ -21,6 +21,10 @@ topKeywordCount <- 20 ## SET TO 20 FOR THIS RUN
 
 ## corp <- createCorp(readFrom)
 corp <- createCorp(readFrom, year) ## added year
+
+# To access original id of a document in VCorp run corp[[ index_of_document_1_to_N ]]$meta$id
+# To access original id of a document in DocumentTermMatrix run dtm$dimnames$Docs[ index_of_document_1_to_N ]
+
 cat("DEBUG after calling createCorp!\n")
 ## Build a Document-Term Matrix
 dtm <- DocumentTermMatrix(corp, control = list(minWordLength = 2)) #keep words of lenght 2 or longer
@@ -31,6 +35,7 @@ cat("After tf-idf: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
 #dtm <- removeSparseTerms(dtm, 1 - (1.1/nrow(dtm)) )  #remove terms appearing only in 1 document
 #dtm <- dtm[row_sums(dtm) > 0,]  #remove docs that have no terms remaining (unlikely event)
 cat("After removing terms appearing only in 1 document: term count =", ncol(dtm), ", doc count =", nrow(dtm), "\n")
+
 
 #setup parallel backend to use 8 processors
 cl<-makeCluster(8) ## change to 8 for multiprocessing

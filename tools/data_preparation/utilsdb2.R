@@ -95,10 +95,11 @@ createCorp <- function(readFromfileName, year){
 ## this is a private function for corpus creation
 doCorpCreation <- function(Posts){
   # Concatenate columns, otherwise DataframeSource gets confused
-  Posts <- data.frame(paste(Posts$title, Posts$body, Posts$answers, sep =" "))
+  Posts <- data.frame(doc_id = Posts$id, txt = paste(Posts$title, Posts$body, Posts$answers, sep =" "))
 
   ## Build a corpus
-  corp <- Corpus(DataframeSource(Posts))
+  posts.reader <- readTabular(mapping=list(content="txt", id="doc_id"))
+  corp <- VCorpus(DataframeSource(Posts), readerControl=list(reader=posts.reader))
 
   ## Transform data
   corp = tm_map(corp, content_transformer(tolower)) #converting to lower case
