@@ -2,6 +2,11 @@
 
 # Keep a subset of xml rows associated with a partcular tag
 
+# to stream from an archive, to saving space, do something like
+# gunzip -c posts.xml.gz | perl xml_filter_by_tag.pl db2 > out_file_name
+# or 
+# 7z x posts.xml.gz -so | perl xml_filter_by_tag.pl db2 > out_file_name
+
 # Algorithm:
 # if post type == q
 # 	if tag == db2
@@ -14,20 +19,22 @@
 
 use strict;
 use XML::Twig;
+use IO::Handle;
 
 
-if ( scalar(@ARGV) != 2 ) {
-	print "usage: xml_filter_by_tag.pl in_file_name my_tag > out_file_name\n";
+if ( scalar(@ARGV) != 1 ) {
+	print "usage: xml_filter_by_tag.pl my_tag < in_file_name > out_file_name\n";
 	exit;
 }
 
-my $file_in = $ARGV[0];
-my $tag_of_interest = $ARGV[1];
+my $tag_of_interest = $ARGV[0];
 
 my $quesion_ids = {};
 
 my $twig= new XML::Twig( twig_handlers => { row => \&row_parser } ); 
-$twig->parsefile( $file_in );                 # parse the twig
+
+my $io = IO::Handle->new();
+$twig->parse( $io->fdopen(fileno(STDIN),"r") );                 # parse the twig
 $twig->flush;
 
 sub row_parser{ 
