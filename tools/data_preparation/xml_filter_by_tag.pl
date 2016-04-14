@@ -2,7 +2,7 @@
 
 # Keep a subset of xml rows associated with a partcular tag
 
-# to stream from an archive, to saving space, do something like
+# to stream from an archive, to save space, do something like
 # gunzip -c posts.xml.gz | perl xml_filter_by_tag.pl db2 > out_file_name
 # or 
 # 7z x posts.xml.gz -so | perl xml_filter_by_tag.pl db2 > out_file_name
