@@ -31,7 +31,8 @@ my $tag_of_interest = $ARGV[0];
 
 my $quesion_ids = {};
 
-my $twig= new XML::Twig( twig_handlers => { row => \&row_parser } ); 
+my $twig= new XML::Twig( twig_handlers => { row => \&row_parser } 
+	, pretty_print => 'indented'); 
 
 my $io = IO::Handle->new();
 $twig->parse( $io->fdopen(fileno(STDIN),"r") );                 # parse the twig
