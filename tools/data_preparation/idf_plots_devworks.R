@@ -1,44 +1,28 @@
-## This Script plots the idf* input files idf x probability of keyword per topic
+## This Script plots the idf* input files (idf x probability) residing in the pathsave directory
+## The corpus files are provided by IBM, after processed with do_analysis_db2_idf_devWorks.R it produces the 
+## idf files
+## the pathsave needs to be customized
+## Author. Jorge Lopez June 2016
 
-## plotting topic/keyword data
-setwd("Z:/DR Miransky/devWorks") ##only RU PC!!!
-dat<-read.delim(file = "idf_Sun-May-29_21-50-20_2016_devworks_T1.txt", header = T, quote = "", sep = "\t")
-dat <- as.data.frame(dat)
-dev.new(width=5, height=15)
-plot(dat$idf, dat$PROBABILITY, main="TOPIC 1 dev Works db2 Forum", sub=paste("N=", dat$N[1]), font=4, xlab="idf", ylab="probability", pch = NA)
-text(dat$idf, dat$PROBABILITY, labels=dat$KEYWORD, cex= 1.2, col="red")
-##lines(dat$idf, dat$PROBABILITY)
-grid(nx=NULL, ny=NULL)
+library(jpeg)
 
+listf <- list.files(pattern = "idf_.*\\.txt")
+## Z:\DR Miransky\devWorks\New DevWorks
 
- 
-dat<-read.delim(file = "idf_Sun-May-29_21-50-20_2016_devworks_T2.txt", header = T, quote = "", sep = "\t")
-dat <- as.data.frame(dat)
-dev.new(width=5, height=15)
-plot(dat$idf, dat$PROBABILITY, main="TOPIC 2 dev Works db2 Forum", sub=paste("N=", dat$N[1]), xlab="idf", ylab="probability", pch = NA)
-text(dat$idf, dat$PROBABILITY, labels=dat$KEYWORD, cex= 1.2, col="red")
-grid()
-
- 
-dat<-read.delim(file = "idf_Sun-May-29_21-50-20_2016_devworks_T3.txt", header = T, quote = "", sep = "\t")
-dat <- as.data.frame(dat)
-dev.new(width=5, height=15)
-plot(dat$idf, dat$PROBABILITY, main="TOPIC 3 dev Works db2 Forum", sub=paste("N=", dat$N[1]), xlab="idf", ylab="probability", pch = NA)
-text(dat$idf, dat$PROBABILITY, labels=dat$KEYWORD, cex= 1.2, col="red")
-grid()
-
- 
-dat<-read.delim(file = "idf_Sun-May-29_21-50-20_2016_devworks_T4.txt", header = T, quote = "", sep = "\t")
-dat <- as.data.frame(dat)
-dev.new(width=5, height=15)
-plot(dat$idf, dat$PROBABILITY, main="TOPIC 4 dev Works db2 Forum", sub=paste("N=", dat$N[1]), xlab="idf", ylab="probability", pch = NA)
-text(dat$idf, dat$PROBABILITY, labels=dat$KEYWORD, cex= 1.2, col="red")
-grid()
-
- 
-dat<-read.delim(file = "idf_Sun-May-29_21-50-20_2016_devworks_T5.txt", header = T, quote = "", sep = "\t")
-dat <- as.data.frame(dat)
-dev.new(width=5, height=15)
-plot(dat$idf, dat$PROBABILITY, main="TOPIC 5 dev Works db2 Forum", sub=paste("N=", dat$N[1]), xlab="idf", ylab="probability", pch = NA)
-text(dat$idf, dat$PROBABILITY, labels=dat$KEYWORD, cex= 1.2, col="red")
-grid()
+for(i in 1:length(listf)) {
+  ###dev.new(width=16,height=9,noRStudioGD = TRUE)
+  ##dev.off()
+  plotfn <- paste(substr(listf[i],1,25), ".jpg", sep="")
+  ###pathsave <- file.path("Z:","DR Miransky", "devWorks","New DevWorks", plotfn)
+  pathsave <- file.path("C:", "Users", "owner", "Documents", "MSC", "db2", "New devWorks", "plots", plotfn)
+  jpeg(file=pathsave, width=1500, height=1000)
+  dat<-read.csv(listf[i])
+  dat <- as.data.frame(dat)
+  ##dev.new()
+  plot(dat$idf, dat$PROBABILITY, main=paste("TOPIC ", dat$TOPIC[1], "-", dat$YEAR[1], " dev Works db2 Forum",sep=""), sub=paste("N=", dat$N[1]), font=4, xlab="idf", ylab="probability", pch = NA)
+  text(dat$idf, dat$PROBABILITY, labels=dat$KEYWORD, cex= 1.2, col="red")
+  grid()
+  ###lines(dat$idf, dat$PROBABILITY)
+  cat("File plotted is ", listf[i], "number=", i,"\n")
+  graphics.off()
+}
