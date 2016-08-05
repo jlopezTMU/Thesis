@@ -70,10 +70,12 @@ dat <- read.csv(readFromfileName, header = T, sep = ",", row.names = NULL) ## NO
   
 
 
-  b.lm <- lm(b ~ N + I(N^2) + X + I(X^2), data = to_fit)
+  ## b.lm <- lm(b ~ N + I(N^2) + X + I(X^2), data = to_fit)
+  
+  b.lm <- lm(b ~ N + I(N^2) + I(N^3) + X + I(X^2) + I(X^3), data = to_fit)
   
   summary(b.lm)
   
-  write.csv(to_fit,file="tofit_075")
+  write.csv(to_fit,file="tofit_075_NX")
   
   
