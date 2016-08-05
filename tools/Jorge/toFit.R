@@ -5,6 +5,7 @@
 ## This program iterates over the specified datasets, fits a nls into a df, rbinds the dfs an then fits b with a lm
 ## This program assumes that the input file is structured correctly, therefore no exhaustive validations need to
 ## take place
+## mod. Aug 4. only considers 75% of rows...
 ################################################################################################################
 
 to_fit <- data.frame(b = c(), X=c(), N=c())
@@ -59,7 +60,8 @@ topicCountList <- sort(unique(strtoi(dat$topicCount))) ## making sure the list i
         
         i <- i - 1; Gf <- i;
         cat("i=", i, " Gi=", Gi, " Gf=", Gf, "\n")
-        ds <- dat[Gi:Gf,]
+        Gf <- round((Gf-Gi)*0.75)
+        ds <- dat[Gi:Gf,] ## only considers 75% of rows...
         topX.nls <- nls(ds$postFraction ~ ds$topXX^(-b) * ds$topicCount^b, data = ds, start = list( b = -1),)
         cat("After topX.nls i=",i, "\n")
         to_fit <- rbind(to_fit, data.frame( b = coef(topX.nls), X = max(ds$topXX), N = max(ds$documentCount) ))
@@ -73,6 +75,6 @@ topicCountList <- sort(unique(strtoi(dat$topicCount))) ## making sure the list i
   
   summary(b.lm)
   
-  write.csv(to_fit,file="to_fit")
+  write.csv(to_fit,file="tofit_075")
   
   

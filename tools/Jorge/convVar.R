@@ -2,6 +2,7 @@
 ### for them to be analyzed later with a regression model
 ### author. Jorge Lopez
 ### date. Jul 2016
+### mod. Aug 4 "append = F"
 
 readFile <- function(fName) {
 ###########################
@@ -60,7 +61,7 @@ processFile <- function(dat){
     cat(dir(outPath),"\n")
     cat("FILE EXIST NOT NEGATED:", fName, " is ", file.exists(fName), "\n")
     ###cat("FILE EXIST NEGATED:", fName, " is ", !file.exists(fName), "\n")
-    write.table(topX, file = fName, sep = ",", row.names=FALSE, col.names=TRUE, append = T)
+    write.table(topX, file = fName, sep = ",", row.names=FALSE, col.names=TRUE, append = F)
     firstime <<- FALSE
     print(file.info(fName))
   } else {
