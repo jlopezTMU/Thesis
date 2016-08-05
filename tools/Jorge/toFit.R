@@ -21,7 +21,6 @@ readFromfileName = "topX.csv"
 
 ##dat <- read.csv(readFromfileName, header = T, sep = "\t", row.names = NULL) ## EXCEL
 dat <- read.csv(readFromfileName, header = T, sep = ",", row.names = NULL) ## NOT EXCEL
-topicCountList <- sort(unique(strtoi(dat$topicCount))) ## making sure the list is ordered
 
 ##for (i in 1:nrow(dat)) {
   i <- 1
