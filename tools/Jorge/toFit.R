@@ -33,6 +33,8 @@ for(iG in 1:length(validGroups)) {
     p3 <- as.character(sdf[3,]) ## dataset_name
     ds <- dat[dat$timeframe_type ==  p1 & dat$timeframe == p2 & dat$dataset_name == p3 & dat$topXX == itopXX,]
     cat("p1=", p1, " p2=", p2, " p3=", p3, " itopXX=", itopXX, " iG=", iG, "\n")
+    ## cutting 25% of right tail
+    ds <- ds[ds$topicCount < 0.75 * max(ds$documentCount), ]
     topX.nls <- nls(ds$postFraction ~ ds$topXX^(-b) * ds$topicCount^b, data = ds, start = list( b = -1),)
     to_fit <- rbind(to_fit, data.frame( b = coef(topX.nls), X = max(ds$topXX), N = max(ds$documentCount) ))
   }
