@@ -42,6 +42,8 @@ for(iG in 1:length(validGroups)) {
 
   b.lm <- lm(b ~ N + I(N^2) + X + I(X^2), data = to_fit)
   
+  summary(b.lm)
+  
   b.lm <- lm(b ~ N + I(N^2) + I(N^3) + X + I(X^2) + I(X^3), data = to_fit)
   
   summary(b.lm)
