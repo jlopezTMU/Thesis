@@ -7,7 +7,7 @@
 ## take place
 ## mod. Aug 4. only considers 75% of rows...
 ## mod. Aug 6. Code rewriten to better use R arrays handling capabilities
-## mod. Feb 1. Commented out cut of long tail as this was already performed in convVar_k200.R
+## mod. Feb 4. modified lines 38 and 39
 ################################################################################################################
 
 to_fit <- data.frame(b = c(), X=c(), N=c())
@@ -18,7 +18,7 @@ XSystime <<- format(Sys.time(), "%a-%b-%d_%H-%M-%S_%Y")
 readFromfileName = "topX.csv"
 
 #####################################################################################################################
-#####                                           main                                                      #####
+#####                                           main                                                            #####
 #####################################################################################################################
 
 ##dat <- read.csv(readFromfileName, header = T, sep = "\t", row.names = NULL) ## EXCEL
@@ -34,7 +34,7 @@ for(iG in 1:length(validGroups)) {
     p3 <- as.character(sdf[3,]) ## dataset_name
     ds <- dat[dat$timeframe_type ==  p1 & dat$timeframe == p2 & dat$dataset_name == p3 & dat$topXX == itopXX,]
     cat("p1=", p1, " p2=", p2, " p3=", p3, " itopXX=", itopXX, " iG=", iG, "\n")
-##    ## cutting 25% of right tail
+ 
     ds <- ds[ds$topicCount <= 200, ] ## added
     ds <- ds[ds$topicCount < 0.75 * max(ds$documentCount), ] ## uncommented
     topX.nls <- nls(ds$postFraction ~ ds$topXX^(-b) * ds$topicCount^b, data = ds, start = list( b = -1),)
