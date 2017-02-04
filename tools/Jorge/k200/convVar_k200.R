@@ -13,8 +13,8 @@ readFile <- function(fName) {
   dat$x<-NULL
 
   dat<-as.data.frame(dat)
-  dat<-dat[strtoi(dat$topicCount)<=200,] ## extract only data for the first 200 topics
-  dat<-dat[strtoi(dat$topicCount)<=max(strtoi(dat$topicCount)*0.75),] ## extract only 75% of dat
+  ## dat<-dat[strtoi(dat$topicCount)<=200,] ## extract only data for the first 200 topics
+  ## dat<-dat[strtoi(dat$topicCount)<=max(strtoi(dat$topicCount)*0.75),] ## extract only 75% of dat
 
   return(dat)
 
