@@ -4,6 +4,7 @@
 ### author. Jorge Lopez
 ### date. Jul 2016 (first version)
 ### date. Jan 2017 (This version considers only the first 200 topics and filters out then 0.75 of the data, this is for improving the fit)
+###       Feb 3 2017. commented out lines for filtering by k<=200 and 0.75
 
 readFile <- function(fName) {
   ###########################
