@@ -24,10 +24,17 @@ plot(log(dat$X), dat$lm_intercept)
 plot(dat$X, dat$lm_slope)
 
 # The intercept is approximate pretty good:
-summary(lm(lm_intercept ~ log(X), data = dat))
+dat.lm.intercept <- lm(lm_intercept ~ log(X) + log(N), data = dat)
+summary(dat.lm.intercept)
 
 # The slope is not so much. Jorge, any ways to improve?
 dat.lm.slope <- lm(lm_slope ~ X  + N, data = dat)
 summary(dat.lm.slope)
 plot(dat.lm.slope)
+
+
+#output models for LaTex
+library(stargazer)
+stargazer(dat.lm.intercept, ci=TRUE, ci.level=0.90, single.row=TRUE)
+stargazer(dat.lm.slope, ci=TRUE, ci.level=0.90, single.row=TRUE)
 
