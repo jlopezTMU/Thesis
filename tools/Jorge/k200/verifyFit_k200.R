@@ -1,7 +1,4 @@
 ################################################################################################################
-## Program. toFit (redesigned)
-## Author. Jorge Lopez
-## Date. July 25, 2016
 ## This program iterates over the specified datasets, and computes the RMSE of the approximation formulas
 ################################################################################################################
 
