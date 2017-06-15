@@ -45,4 +45,12 @@ plot(dat.lm.slope)
 library(stargazer)
 stargazer(dat.lm.intercept, ci=TRUE, ci.level=0.90, single.row=TRUE)
 stargazer(dat.lm.slope, ci=TRUE, ci.level=0.90, single.row=TRUE)
+################################################################################################
+# let us save the models for validation purposes
+################################################################################################
+if(data_filter_200){
+  model_file_name <- "./models/models_fitting.remove_top_25_percent_and_values_gt_200.rda"
+}else{
+  model_file_name <- "./models/models_fitting.remove_top_25_percent.rda"
+}
 
