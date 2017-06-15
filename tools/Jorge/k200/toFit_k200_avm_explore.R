@@ -17,6 +17,9 @@ XSystime <<- format(Sys.time(), "%a-%b-%d_%H-%M-%S_%Y")
 ##readFromfileName = "topX.5"
 readFromfileName = "topX.csv.original"
 
+#set to True if you want to enable filtering of K > 200, else set to False
+data_filter_200 <- T
+
 #####################################################################################################################
 #####                                           main                                                            #####
 #####################################################################################################################
@@ -34,8 +37,10 @@ for(iG in 1:length(validGroups)) {
     p3 <- as.character(sdf[3,]) ## dataset_name
     ds <- dat[dat$timeframe_type ==  p1 & dat$timeframe == p2 & dat$dataset_name == p3 & dat$topXX == itopXX,]
     cat("p1=", p1, " p2=", p2, " p3=", p3, " itopXX=", itopXX, " iG=", iG, "\n")
- 
-    ds <- ds[ds$topicCount <= 200, ] ## added
+    
+    if(data_filter_200){
+      ds <- ds[ds$topicCount <= 200, ] ## added
+    }
     ds <- ds[ds$topicCount < 0.75 * max(ds$documentCount), ] ## uncommented
     
     topX.lm <- lm(log(postFraction) ~ log(topicCount), data = ds )
@@ -52,4 +57,9 @@ for(iG in 1:length(validGroups)) {
   }
 }
 
-write.csv(to_fit, "to_fit.csv")
+#save output
+if(data_filter_200){
+  write.csv(to_fit, "to_fit.remove_top_25_percent_and_values_gt_200.csv")
+}else{
+  write.csv(to_fit, "to_fit.remove_top_25_percent.csv")
+}
