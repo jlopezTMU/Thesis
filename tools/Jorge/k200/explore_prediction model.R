@@ -1,4 +1,12 @@
-dat <- read.csv( "to_fit.csv")
+#set to True if you want to enable filtering of K > 200, else set to False
+data_filter_200 <- T
+
+if(data_filter_200){
+  dat <- read.csv("to_fit.remove_top_25_percent_and_values_gt_200.csv")
+}else{
+  dat <- read.csv("to_fit.remove_top_25_percent.csv")
+}
+
 
 ##
 # For every month and top-x we built a model

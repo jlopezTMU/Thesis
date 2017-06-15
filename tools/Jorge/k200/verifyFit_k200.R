@@ -2,7 +2,16 @@
 ## This program iterates over the specified datasets, and computes the RMSE of the approximation formulas
 ################################################################################################################
 
+#set to True if you want to enable filtering of K > 200, else set to False
+data_filter_200 <- T
+
 readFromfileName = "topX.csv.original"
+
+if(data_filter_200){
+  model_file_name <- "./models/models_fitting.remove_top_25_percent_and_values_gt_200.rda"
+}else{
+  model_file_name <- "./models/models_fitting.remove_top_25_percent.rda"
+}
 
 #####################################################################################################################
 #####                          define approximation formulas                                                    #####
@@ -58,8 +67,10 @@ for(iG in 1:length(validGroups)) {
     ds <- dat[dat$timeframe_type ==  p1 & dat$timeframe == p2 & dat$dataset_name == p3 & dat$topXX == itopXX,]
     #cat("p1=", p1, " p2=", p2, " p3=", p3, " itopXX=", itopXX, " iG=", iG, "\n")
  
-    ds <- ds[ds$topicCount <= 200, ] ## added
-    ds <- ds[ds$topicCount < 0.75 * max(ds$documentCount), ] ## uncommented
+    if(data_filter_200){ #if True -- keep only values of K <= 200
+      ds <- ds[ds$topicCount <= 200, ]
+    }
+    ds <- ds[ds$topicCount < 0.75 * max(ds$documentCount), ] 
     
     
     #fit indvidual flex model
