@@ -81,7 +81,7 @@ for(iG in 1:length(validGroups)) {
     
     
     F.ds.lm.flex <- exp(predict(ds.lm.flex)) #keep in mind that we are operating on log-transform data here, need to convert it back
-    F.ds.lm.constr <- predict(ds.lm.constr) #keep in mind that we are operating on log-transform data here, need to convert it back
+    F.ds.lm.constr <- predict(ds.lm.constr)
   
     F.model_two_param <- model_two_param(ds$topicCount, ds$topXX[1], ds$documentCount[1])
     F.model_one_param <- model_one_param(ds$topicCount, ds$topXX[1], ds$documentCount[1])
