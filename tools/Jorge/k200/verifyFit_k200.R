@@ -5,14 +5,17 @@
 #set to True if you want to enable filtering of K > 200, else set to False
 data_filter_200 <- T
 
-readFromfileName = "topX.csv.original"
+readFromfileName = "topX.csv.original.zip"
 
 if(data_filter_200){
   model_file_name <- "./models/models_fitting.remove_top_25_percent_and_values_gt_200.rda"
+  models_performance_file_name <- "./models/models_performance.remove_top_25_percent_and_values_gt_200.csv"
 }else{
   model_file_name <- "./models/models_fitting.remove_top_25_percent.rda"
+  models_performance_file_name <- "./models/models_performance.remove_top_25_percent.csv"
 }
 
+load(model_file_name)
 #####################################################################################################################
 #####                          define approximation formulas                                                    #####
 #####################################################################################################################
@@ -21,9 +24,20 @@ if(data_filter_200){
 # K == topic count
 # X == the top-X 
 # N == number of documents
-model_two_param <- function(K, X, N){
-  a <- 1.171 + 0.649 * log(X) - 0.116 * log(N)
-  b <- -0.841 + 0.002 * X + 0.00003 * N
+model_two_param_simple <- function(K, X, N){
+  
+  val <- data.frame(X = X, N = N)
+  a <- predict(dat.lm.intercept, val) # 1.171 + 0.649 * log(X) - 0.116 * log(N)
+  b <- predict(dat.lm.slope, val)  # -0.841 + 0.002 * X + 0.00003 * N
+  
+  a * K^b
+}
+
+model_two_param_complex <- function(K, X, N){
+  
+  val <- data.frame(X = X, N = N)
+  a <- predict(dat.lm.intercept.complex, val) 
+  b <- predict(dat.lm.slope.complex, val) 
   
   a * K^b
 }
@@ -32,11 +46,21 @@ model_two_param <- function(K, X, N){
 # K == topic count
 # X == the top-X 
 # N == number of documents
-model_one_param <- function(K, X, N){
-  b <- -8.408351E-01 + 2.110667E-03 * X + 3.397901E-05 * N
+
+model_one_param_simple <- function(K, X, N){
+  val <- data.frame(X = X, N = N)
+  b <- predict(dat.lm.b, val)  #-8.408351E-01 + 2.110667E-03 * X + 3.397901E-05 * N
   
   X^-b * K^b
 }
+
+model_one_param_complex <- function(K, X, N){
+  val <- data.frame(X = X, N = N)
+  b <- predict(dat.lm.b.complex, val)
+  
+  X^-b * K^b
+}
+
 
 #####################################################################################################################
 #####                                           helpers                                                         #####
@@ -51,7 +75,7 @@ rmse <- function(actual, expected){
 #####                                           main                                                            #####
 #####################################################################################################################
 
-dat <- read.csv(readFromfileName, header = T, sep = ",", row.names = NULL) ## NOT EXCEL
+dat <- read.csv(unz(readFromfileName, "topX.csv.original"), header = T, sep = ",", row.names = NULL) ## NOT EXCEL
 validGroups <- unique(paste(dat$timeframe_type, dat$timeframe, dat$dataset_name, sep = " "))
 
 dat.stats <- data.frame()
@@ -83,8 +107,10 @@ for(iG in 1:length(validGroups)) {
     F.ds.lm.flex <- exp(predict(ds.lm.flex)) #keep in mind that we are operating on log-transform data here, need to convert it back
     F.ds.lm.constr <- predict(ds.lm.constr)
   
-    F.model_two_param <- model_two_param(ds$topicCount, ds$topXX[1], ds$documentCount[1])
-    F.model_one_param <- model_one_param(ds$topicCount, ds$topXX[1], ds$documentCount[1])
+    F.model_two_param_simple <- model_two_param_simple(ds$topicCount, ds$topXX[1], ds$documentCount[1])
+    F.model_one_param_simple <- model_one_param_simple(ds$topicCount, ds$topXX[1], ds$documentCount[1])
+    F.model_two_param_complex <- model_two_param_complex(ds$topicCount, ds$topXX[1], ds$documentCount[1])
+    F.model_one_param_complex <- model_one_param_complex(ds$topicCount, ds$topXX[1], ds$documentCount[1])
     
     #compute rmse and save stats
     dat.stats <- rbind(dat.stats,
@@ -94,8 +120,10 @@ for(iG in 1:length(validGroups)) {
         dataset_name = p3,
         X = ds$topXX[1],
         N = ds$documentCount[1],
-        rmse_flex_model = rmse(ds$postFraction, F.model_two_param),
-        rmse_constraint_model = rmse(ds$postFraction, F.model_one_param),
+        rmse_flex_model_simple = rmse(ds$postFraction, F.model_two_param_simple),
+        rmse_constraint_model_simple = rmse(ds$postFraction, F.model_one_param_simple),
+        rmse_flex_model_complex = rmse(ds$postFraction, F.model_two_param_complex),
+        rmse_constraint_model_complex = rmse(ds$postFraction, F.model_one_param_complex),
         rmse_tailored_flex_lm = rmse(ds$postFraction, F.ds.lm.flex),
         rmse_tailored_constr_lm = rmse(ds$postFraction, F.ds.lm.constr)
       )
@@ -103,17 +131,4 @@ for(iG in 1:length(validGroups)) {
   }
 }
 
-write.csv(dat.stats, "model_performance.csv", row.names = FALSE)
-
-#let's visualize performance of the models
-library(tidyr)
-dat.stats.long <- gather(dat.stats, model_name, rmse, rmse_flex_model:rmse_tailored_constr_lm, factor_key=TRUE)
-
-boxplot(rmse ~ model_name, 
-        data = dat.stats.long,
-        log = "y",
-        xlab = "Model Name",
-        ylab = "RMSE"
-        )
-
-
+write.csv(dat.stats, models_performance_file_name, row.names = FALSE)
