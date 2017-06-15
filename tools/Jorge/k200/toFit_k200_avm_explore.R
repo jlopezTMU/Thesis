@@ -53,19 +53,3 @@ for(iG in 1:length(validGroups)) {
 }
 
 write.csv(to_fit, "to_fit.csv")
-
-#  b.lm <- lm(b ~ N + I(N^2) + X + I(X^2), data = to_fit) ## 
-  
-  #b.lm <- lm(b ~ N + I(N^2) + I(N^3) + I(N^4) + I(N^5) + I(N^6) + 
-  #             X + I(X^2) + I(X^3) + I(X^4) + I(X^5) + I(X^6), data = to_fit) ## considers power 6 to fit b
-  
-  ##b.lm <- lm(b ~ N + I(N^2) + I(N^3) + X + I(X^2) + I(X^3), data = to_fit)
-  
-#  summary(b.lm)
-  
- # fn <- "toFit_file"
-#  if (file.exists(fn)) file.remove(fn)
-#  write.csv(to_fit,file=fn)
-  
-#  print(XSystime)
-  
