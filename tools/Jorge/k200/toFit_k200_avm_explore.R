@@ -15,7 +15,7 @@ topX.nls <- vector()
 XSystime <<- format(Sys.time(), "%a-%b-%d_%H-%M-%S_%Y")
 
 ##readFromfileName = "topX.5"
-readFromfileName = "topX.csv.original"
+readFromfileName = "topX.csv.original.zip"
 
 #set to True if you want to enable filtering of K > 200, else set to False
 data_filter_200 <- T
@@ -26,7 +26,7 @@ data_filter_200 <- T
 
 ##dat <- read.csv(readFromfileName, header = T, sep = "\t", row.names = NULL) ## EXCEL
 print(XSystime)
-dat <- read.csv(readFromfileName, header = T, sep = ",", row.names = NULL) ## NOT EXCEL
+dat <- read.csv(unz(readFromfileName, "topX.csv.original"), header = T, sep = ",", row.names = NULL) ## NOT EXCEL
 validGroups <- unique(paste(dat$timeframe_type, dat$timeframe, dat$dataset_name, sep = " "))
 for(iG in 1:length(validGroups)) {
   for(itopXX in 2:50) {
