@@ -30,7 +30,7 @@ model_two_param_simple <- function(K, X, N){
   a <- predict(dat.lm.intercept, val) # 1.171 + 0.649 * log(X) - 0.116 * log(N)
   b <- predict(dat.lm.slope, val)  # -0.841 + 0.002 * X + 0.00003 * N
   
-  a * K^b
+  exp(a  + b * log(K))
 }
 
 model_two_param_complex <- function(K, X, N){
@@ -39,7 +39,7 @@ model_two_param_complex <- function(K, X, N){
   a <- predict(dat.lm.intercept.complex, val) 
   b <- predict(dat.lm.slope.complex, val) 
   
-  a * K^b
+  exp(a  + b * log(K))
 }
 
 # The "constrained" model X^-b(X, N) * K^b(X,N)
