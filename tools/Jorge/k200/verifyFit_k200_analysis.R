@@ -14,7 +14,7 @@ if(data_filter_200){
   model_file_name <- "./models/models_fitting.remove_top_25_percent.rda"
   models_performance_file_name <- "./models/models_performance.remove_top_25_percent.csv"
   rmse_per_model_file_name <- "./models/models_performance__remove_top_25_percent.pdf"
-  rmse_per_dataset_file_name <- "./models/models_performance__per_dataset.remove_top_25_percent.pdf"
+  rmse_per_dataset_file_name <- "./models/models_performance__per_dataset__remove_top_25_percent.pdf"
   rmse_per_x_file_name <- "./models/models_performance__per_x__remove_top_25_percent.pdf"
   rmse_per_n_file_name <- "./models/models_performance__per_n__remove_top_25_percent.pdf"
   
