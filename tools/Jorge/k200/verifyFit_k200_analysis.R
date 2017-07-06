@@ -1,8 +1,6 @@
 #set to True if you want to enable filtering of K > 200, else set to False
 data_filter_200 <- F
 
-readFromfileName = "topX.csv.original.zip"
-
 if(data_filter_200){
   model_file_name <- "./models/models_fitting.remove_top_25_percent_and_values_gt_200.rda"
   models_performance_file_name <- "./models/models_performance__remove_top_25_percent_and_values_gt_200.csv"
