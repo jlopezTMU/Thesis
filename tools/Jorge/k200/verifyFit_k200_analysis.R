@@ -3,7 +3,7 @@ data_filter_200 <- F
 
 if(data_filter_200){
   model_file_name <- "./models/models_fitting.remove_top_25_percent_and_values_gt_200.rda"
-  models_performance_file_name <- "./models/models_performance__remove_top_25_percent_and_values_gt_200.csv"
+  models_performance_file_name <- "./models/models_performance.remove_top_25_percent_and_values_gt_200.csv"
   rmse_per_model_file_name <- "./models/models_performance__remove_top_25_percent_and_values_gt_200.pdf"
   rmse_per_dataset_file_name <- "./models/models_performance__per_dataset__remove_top_25_percent_and_values_gt_200.pdf"
   rmse_per_x_file_name <- "./models/models_performance__per_x__remove_top_25_percent_and_values_gt_200.pdf"
