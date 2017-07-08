@@ -86,13 +86,13 @@ for (i in 1:length(listf))
   
   ##dont need nr <- 200 ## fixed to 200!!!!!!!!!!!!!!!!!!
   
-  X <- round(dat$K[nrow(dat)] - (dat$K[nrow(dat)] * 0.75))
+  dK <- round(dat$K[nrow(dat)] - (dat$K[nrow(dat)] * 0.75))
   
-  Y <- round(X/25)
+  Y <- round(dK/25)
    
   nr <- dat$K[nrow(dat)] - 25 * (Y) ## This works only if N > 500!!
   
-  N <- dat$K[nrow(dat)-Y]
+  N <- dat$K[nrow(dat)] ## KEPT ORIGINAL
   
   ##dont need N <- 200
   
